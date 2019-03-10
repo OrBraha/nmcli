@@ -12,6 +12,7 @@ echo "Displaying available devices:  "
 echo "------------------------------------"
 nmcli dev status | awk ' {print   $1 } ' | grep -v -i "Device" 
 echo "------------------------------------"
+
 # Ask user to config.
 read -p "Please type device to configure: " DEVICE
 read -p "Please type profile name: " PROFILENAME
@@ -21,17 +22,21 @@ read -p "Please type gateway: " GATEWAY
 read -p "Please type DNS: " DNSS
 nmcli connection add type $TYYPE con-name $PROFILENAME ifname $DEVICE ip4 $IPV4 gw4 $GATEWAY
 nmcli con mod $PROFILENAME ipv4.dns $DNSS
-echo "Configuartion completed, Running connectivity test..."
 
-if ping -c 1 google.com &> /dev/null
-then
-  echo "Conecction test Success"
-else
-  echo "Connection test FAIL"
-fi
+# New profile connection test.
+echo "Configuartion completed, Running connectivity test..."
+echo "Connecting to new profile..."
+nmcli connection up $PROFILENAME
+ping -c 1 google.com  &> /dev/null && echo "Connection test successful, disconnecting." || echo "Connection Failed, disconnecting."
+nmcli connection down $PROFILENAME
+
+
+#Display output.
 echo "Showing profiles - : "
+sleep 0.5
 echo "____________________"
-nmcli device status
+nmcli connection show
+echo "____________________"
 
 ## add ping test
 #print output
