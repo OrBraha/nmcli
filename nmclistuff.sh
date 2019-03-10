@@ -1,12 +1,8 @@
 #!/bin/bash
-#
-#
-#
-#
-#
-#
-#
-#
+# Or Braha
+# Homework - nmcli practice.
+# Version 0.1, still needs work.
+
 ## Display available devices to user.
 echo "Displaying available devices:  "
 echo "------------------------------------"
@@ -38,5 +34,3 @@ echo "____________________"
 nmcli connection show
 echo "____________________"
 
-## add ping test
-#print output
