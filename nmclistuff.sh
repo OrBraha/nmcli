@@ -2,17 +2,47 @@
 # Or Braha
 # Homework - nmcli practice.
 # Version 0.1, still needs work.
-
+#########################################################################################
 ## Display available devices to user.
 echo "Displaying available devices:  "
 echo "------------------------------------"
 nmcli dev status | awk ' {print   $1 } ' | grep -v -i "Device" 
 echo "------------------------------------"
-
-# Ask user to config.
+# Display active profiles for user.
+echo "Active profile:  "
+echo "------------------------------------"
+nmcli con show -a | awk -F " " ' { print $5 } ' | sed -r '/^\s*$/d'
+echo "------------------------------------"
 read -p "Please type device to configure: " DEVICE
+##############################################################################################
+# Now I need to look for the device the user typed exists.
+nmcli dev status | awk ' {print   $1 } ' | grep -q -i "$DEVICE"
+if [ $? -ne 0 ] ; then
+	echo "Device not available"
+	exit 1
+fi
+################################################################################################
+
+# Don't think I need a test here, maybe not blank?
 read -p "Please type profile name: " PROFILENAME
+################################################################################################
+
+
+
+
+################################################################################################
 read -p "Please type the connection type: " TYYPE
+# Need to test that the connection type is suitable to nmcli known types. ###
+KNOWNTYPES=( ethernet wifi wimax pppoe gsm cdma infiniband bluetooth vlan bond bond-slave team team-slave bridge bridge-slave vpn olpc-mesh adsl tun ip-tunnel macvlan vxlan )
+printf '%s\n' "${KNOWNTYPES[@]}" | grep -q $TYYPE
+if [ $? -ne 0 ] ; then
+	echo "Type unknown"
+	exit
+fi
+
+##############################################################################
+
+
 read -p "Please type IPV4 i.e 1.2.3.4/24 " IPV4
 read -p "Please type gateway: " GATEWAY
 read -p "Please type DNS: " DNSS
